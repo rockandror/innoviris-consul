@@ -1,20 +1,27 @@
 <div class="poll-question-answers">
   <% if can?(:answer, question) && !question.poll.voted_in_booth?(current_user) %>
-    <% question.question_answers.each do |answer| %>
-      <% if @answers_by_question_id[question.id] == answer.id &&
-            (!voted_before_sign_in(question) ||
-             question.poll.voted_in_booth?(current_user)) %>
-        <span class="button answered"
-              title="<%= t("poll_questions.show.voted", answer: answer.title) %>">
-          <%= answer.title %>
-        </span>
-      <% else %>
-        <%= link_to answer.title,
-          answer_question_path(question, answer_id: answer.id, token: token),
-          method: :post,
-          remote: true,
-          title: t("poll_questions.show.vote_answer", answer: answer.title),
-          class: "button secondary hollow js-question-answer" %>
+    <% if question.is_single_choice? %>
+      <% question.question_answers.each do |answer| %>
+        <% if @answers_by_question_id[question.id] == answer.id &&
+              (!voted_before_sign_in(question) ||
+              question.poll.voted_in_booth?(current_user)) %>
+          <span class="button answered"
+                title="<%= t("poll_questions.show.voted", answer: answer.title) %>">
+            <%= answer.title %>
+          </span>
+        <% else %>
+          <%= link_to answer.title,
+            answer_question_path(question, answer_id: answer.id, token: token),
+            method: :post,
+            remote: true,
+            title: t("poll_questions.show.vote_answer", answer: answer.title),
+            class: "button secondary hollow js-question-answer" %>
+        <% end %>
+      <% end %>
+    <% else %>
+      <%= form_tag answer_question_path(question, token: token), method: :post, remote: true, class: "js-question-open-answer" do |f| %>
+        <%= text_field_tag :open_answer, @answers_by_question_id[question.id], id: "#{dom_id(question)}_answer" %>
+        <%= button_tag t("polls.poll.send_answer"), type: :submit, class: "button secondary hollow #{"answered" if @answers_by_question_id[question.id].present?}" %>
       <% end %>
     <% end %>
   <% elsif !user_signed_in? %>

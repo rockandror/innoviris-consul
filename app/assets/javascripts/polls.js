@@ -18,6 +18,13 @@
           this.href = this.href + token;
         }
       });
+      $(".js-question-open-answer").each(function() {
+        var token_param;
+        token_param = this.action.slice(-6);
+        if (token_param === "token=") {
+          this.action = this.action + token;
+        }
+      });
     },
     initialize: function() {
       var token;

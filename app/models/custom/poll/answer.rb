@@ -6,11 +6,16 @@ class Poll::Answer
   _validators.reject! { |field, _| field == :answer }
 
   _validate_callbacks.each do |callback|
-    if callback.raw_filter.is_a?(ActiveModel::Validations::InclusionValidator)
-      callback.raw_filter.attributes.delete :answer
+    [ActiveModel::Validations::InclusionValidator,
+      ActiveModel::Validations::PresenceValidator].each do |validator|
+      if callback.raw_filter.is_a?(validator)
+        callback.raw_filter.attributes.delete :answer
+      end
     end
   end
 
+  validates :answer, presence: true, if: ->(a) { a.question&.is_single_choice? }
   validates :answer, inclusion: { in: ->(a) { a.question.question_answers }},
-                     unless: ->(a) { a.question.blank? }
+                     if: ->(a) { a.question&.is_single_choice? }
+  validates :open_answer, presence: true, if: ->(a) { !a.question&.is_single_choice? }
 end
