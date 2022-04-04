@@ -23,3 +23,12 @@
     margin-bottom: 0;
   }
 }
+
+.top-bar {
+  .top-bar-title a img {
+    @include breakpoint(medium) {
+      width: 10rem;
+      margin: $line-height / 3 0;
+    }
+  }
+}
