@@ -32,3 +32,14 @@
     }
   }
 }
+
+.public > .wrapper > header {
+  .top-bar {
+    color: $black;
+    background-color: $white;
+
+    a {
+      font-weight: bold;
+    }
+  }
+}
