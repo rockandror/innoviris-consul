@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe "Management" do
+describe "Management", :consul do
   let(:user) { create(:user) }
   before { Setting["org_name"] = "CONSUL" }
 
